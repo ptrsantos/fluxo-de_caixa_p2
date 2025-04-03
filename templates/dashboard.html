@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Financeiro{% endblock %}
+
+{% block content %}
+<div class="container-fluid dashboard-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="dashboard-title text-center mb-4">
+                <i class="fas fa-chart-line me-2"></i>Painel Financeiro
+            </h2>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card card-metric shadow-sm border-0">
+                <div class="card-body text-center py-4">
+                    <div class="metric-icon mb-3 text-primary">
+                        <i class="fas fa-wallet fa-2x"></i>
+                    </div>
+                    <h5 class="card-title text-muted mb-2">Saldo Atual</h5>
+                    <h3 class="card-text {% if saldo >= 0 %}text-success{% else %}text-danger{% endif %} fw-bold">
+                        R$ {{ "%.2f"|format(saldo) }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-metric shadow-sm border-0">
+                <div class="card-body text-center py-4">
+                    <div class="metric-icon mb-3 text-success">
+                        <i class="fas fa-arrow-up fa-2x"></i>
+                    </div>
+                    <h5 class="card-title text-muted mb-2">Total de Entradas</h5>
+                    <h3 class="card-text text-success fw-bold">
+                        R$ {{ "%.2f"|format(total_entradas) }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-metric shadow-sm border-0">
+                <div class="card-body text-center py-4">
+                    <div class="metric-icon mb-3 text-danger">
+                        <i class="fas fa-arrow-down fa-2x"></i>
+                    </div>
+                    <h5 class="card-title text-muted mb-2">Total de Saídas</h5>
+                    <h3 class="card-text text-danger fw-bold">
+                        R$ {{ "%.2f"|format(total_saidas) }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exchange-alt me-2 text-muted"></i>Transações Recentes
+                    </h5>
+                    <a href="{{ url_for('adicionar_transacao') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Nova Transação
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Categoria</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transacao in transacoes %}
+                                <tr>
+                                    <td>{{ transacao.data.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ transacao.descricao }}</td>
+                                    <td>{{ transacao.categoria.nome if transacao.categoria else 'Sem categoria' }}</td>
+                                    <td class="{% if transacao.tipo == 'entrada' %}text-success{% else %}text-danger{% endif %}">
+                                        {% if transacao.tipo == 'entrada' %}+{% else %}-{% endif %}
+                                        R$ {{ "%.2f"|format(transacao.valor) }}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        <i class="fas fa-box-open fa-2x mb-2"></i>
+                                        <p class="mb-0">Nenhuma transação registrada ainda.</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>Dicas de Economia
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Defina metas financeiras
+                            <i class="fas fa-bullseye text-muted"></i>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Estabeleça um orçamento
+                            <i class="fas fa-calculator text-muted"></i>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Corte gastos desnecessários
+                            <i class="fas fa-cut text-muted"></i>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Reserve para emergências
+                            <i class="fas fa-piggy-bank text-muted"></i>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Planeje compras
+                            <i class="fas fa-shopping-cart text-muted"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2 text-primary"></i>Fluxo Financeiro
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="balanceChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2 text-success"></i>Tendência Financeira
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="trendLineChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de Barras - Fluxo Financeiro
+    const balanceCtx = document.getElementById('balanceChart').getContext('2d');
+    new Chart(balanceCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Entradas', 'Saídas'],
+            datasets: [{
+                data: [{{ total_entradas }}, {{ total_saidas }}],
+                backgroundColor: [
+                    'rgba(75, 192, 75, 0.6)',  // Verde para entradas
+                    'rgba(255, 99, 132, 0.6)'  // Vermelho para saídas
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de Linhas - Tendência Financeira
+    const trendCtx = document.getElementById('trendLineChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [{
+                label: 'Saldo Mensal',
+                data: [1200, 1500, 1300, 1700, 1600, 1900],
+                borderColor: 'rgba(54, 162, 235, 0.8)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

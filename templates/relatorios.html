@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatórios Financeiros{% endblock %}
+
+{% block content %}
+<h2>Relatórios Financeiros</h2>
+<!-- Formulário para selecionar intervalo de datas -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Filtrar Relatório</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('relatorios') }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="data_inicio">Data de Início</label>
+                            <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data_fim">Data de Fim</label>
+                            <input type="date" class="form-control" id="data_fim" name="data_fim" required>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-end">
+                        <button type="submit" class="btn btn-primary">Gerar Relatório</button>
+                        <a href="/relatorios/pdf?data_inicio=2025-04-01&data_fim=2025-04-30" class="btn btn-secondary" target="_blank">Exportar PDF</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resto do template para resumo e detalhes -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4>Resumo</h4>
+                <ul>
+                    <li><strong>Receitas Totais:</strong> R$ {{ receitas_totais }}</li>
+                    <li><strong>Despesas Totais:</strong> R$ {{ despesas_totais }}</li>
+                    <li><strong>Saldo Final:</strong> R$ {{ saldo_final }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4>Detalhes</h4>
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Data</th>
+                            <th>Categoria</th>
+                            <th>Descrição</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if detalhes %}
+                            {% for item in detalhes %}
+                            <tr>
+                                <td>{{ item.data.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ item.categoria.nome }}</td>
+                                <td>{{ item.descricao }}</td>
+                                <td class="{{ 'entrada' if item.tipo == 'entrada' else 'saida' }}">
+                                    {{ item.tipo | capitalize }}
+                                </td>
+                                <td>R$ {{ item.valor }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">Nenhuma transação encontrada para o período selecionado.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- <script>
+    // Atualiza o href do botão Exportar PDF com os valores atuais dos campos de data
+    document.getElementById('export-pdf').addEventListener('click', function(evt) {
+        const dataInicio = document.getElementById('data_inicio').value;
+        const dataFim    = document.getElementById('data_fim').value;
+        if (!dataInicio || !dataFim) {
+            alert('Preencha as datas antes de exportar o PDF.');
+            evt.preventDefault();
+            return;
+        }
+        this.href = `/relatorios/pdf?data_inicio=${dataInicio}&data_fim=${dataFim}`;
+    });
+</script> -->

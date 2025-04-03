@@ -1,0 +1,54 @@
+<!-- templates/categorias.html -->
+{% extends 'base.html' %}
+
+{% block title %}Categorias{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Categorias</h2>
+    <a href="{{ url_for('adicionar_categoria') }}" class="btn btn-primary">Nova Categoria</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Categorias de Entrada</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for categoria in categorias %}
+                        {% if categoria.tipo == 'entrada' %}
+                        <div class="list-group-item">
+                            {{ categoria.nome }}
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="list-group-item">Nenhuma categoria encontrada</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Categorias de Saída</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for categoria in categorias %}
+                        {% if categoria.tipo == 'saida' %}
+                        <div class="list-group-item">
+                            {{ categoria.nome }}
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="list-group-item">Nenhuma categoria encontrada</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

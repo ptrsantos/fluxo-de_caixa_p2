@@ -1,0 +1,49 @@
+<!-- templates/adicionar_categoria.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <!-- Formulário -->
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4>Adicionar Categoria</h4>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('adicionar_categoria') }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              {{ form.nome.label(class="form-label") }}
+              {{ form.nome(class="form-control", placeholder="Digite o nome da categoria") }}
+            </div>
+            <div class="form-group">
+              {{ form.tipo.label(class="form-label") }}
+              {{ form.tipo(class="form-control") }}
+            </div>
+            <div class="form-group mt-3">
+              {{ form.submit(class="btn btn-primary") }}
+              <a href="{{ url_for('categorias') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Card de Dicas -->
+    <div class="col-md-4">
+      <div class="card border-info">
+        <div class="card-header bg-info text-white">
+          Dicas
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            Informe um nome para a categoria e selecione seu tipo.
+            <br>
+            Utilize <strong>Entrada</strong> para receitas e <strong>Saída</strong> para despesas.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

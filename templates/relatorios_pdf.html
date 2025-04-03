@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>Relatório Financeiro</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        h1 { text-align: center; }
+        .resumo { margin-bottom: 20px; }
+        .resumo p { margin: 5px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid #ccc; }
+        th, td { padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Relatório Financeiro</h1>
+    <div class="resumo">
+        <p><strong>Data de Início:</strong> {{ resumo.data_inicio }}</p>
+        <p><strong>Data de Fim:</strong> {{ resumo.data_fim }}</p>
+        <p><strong>Receitas Totais:</strong> {{ resumo.receitas_totais }}</p>
+        <p><strong>Despesas Totais:</strong> {{ resumo.despesas_totais }}</p>
+        <p><strong>Saldo Final:</strong> {{ resumo.saldo_final }}</p>
+    </div>
+
+    <h2>Detalhes das Transações</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transacao in detalhes %}
+            <tr>
+                <td>{{ transacao.data.strftime('%d/%m/%Y') }}</td>
+                <td>{{ transacao.descricao }}</td>
+                <td>{{ transacao.tipo }}</td>
+                <td>R$ {{ "{:.2f}".format(transacao.valor) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

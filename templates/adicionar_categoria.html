@@ -1,0 +1,72 @@
+<!-- templates/adicionar_categoria.html -->
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Categoria{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <!-- Formulário -->
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4>Adicionar Categoria</h4>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('adicionar_categoria') }}">
+
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group mb-3">
+              {{ form.nome.label(class="form-label") }}
+              {{ form.nome(class="form-control", placeholder="Digite o nome da categoria") }}
+              {% if form.nome.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in form.nome.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group mb-3">
+              {{ form.tipo.label(class="form-label") }}
+              {{ form.tipo(class="form-select") }}
+              {% if form.tipo.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in form.tipo.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="form-group mt-3 text-end">
+              <a href="{{ url_for('categorias') }}" class="btn btn-secondary me-2">Cancelar</a>
+              {{ form.submit(class="btn btn-primary") }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Card de Dicas -->
+    <div class="col-md-4">
+      <div class="card border-info">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">Dicas</h5>
+        </div>
+        <div class="card-body">
+          <p class="card-text">Ao criar uma categoria:</p>
+          <ul>
+            <li>Informe um nome claro e objetivo</li>
+            <li>Utilize <strong>Entrada</strong> para receitas</li>
+            <li>Utilize <strong>Saída</strong> para despesas</li>
+            <li>Categorias bem definidas melhoram seus relatórios</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

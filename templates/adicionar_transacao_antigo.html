@@ -1,0 +1,80 @@
+<!-- templates/adicionar_transacao.html -->
+{% extends 'base.html' %}
+
+{% block title %}Nova Transação{% endblock %}
+
+{% block content %}
+<h2>Nova Transação</h2>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <input type="text" class="form-control" id="descricao" name="descricao" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="valor" class="form-label">Valor (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="data" name="data" required value="{{ now().strftime('%Y-%m-%d') }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tipo" class="form-label">Tipo</label>
+                        <select class="form-select" id="tipo" name="tipo" required>
+                            <option value="">Selecione</option>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoria_id" class="form-label">Categoria</label>
+                        <select class="form-select" id="categoria_id" name="categoria_id">
+                            <option value="">Selecione uma categoria</option>
+                            <optgroup label="Entradas">
+                                {% for categoria in categorias %}
+                                    {% if categoria.tipo == 'entrada' %}
+                                    <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </optgroup>
+                            <optgroup label="Saídas">
+                                {% for categoria in categorias %}
+                                    {% if categoria.tipo == 'saida' %}
+                                    <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="text-end">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary me-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Dicas</h5>
+            </div>
+            <div class="card-body">
+                <p>Ao registrar uma transação:</p>
+                <ul>
+                    <li>Escolha uma descrição clara e específica</li>
+                    <li>Selecione a categoria correta para facilitar o controle</li>
+                    <li>Verifique se o valor está correto antes de salvar</li>
+                    <li>Categorize adequadamente para ter relatórios precisos</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

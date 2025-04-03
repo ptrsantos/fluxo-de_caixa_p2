@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Financeiro{% endblock %}
+
+{% block content %}
+<div class="container-fluid dashboard-container vh-100 p-3">
+    <div class="row g-3 h-100">
+        <!-- Coluna de Métricas e Resumo -->
+        <div class="col-md-3 h-100 d-flex flex-column">
+            <div class="row g-3 flex-grow-1">
+                <!-- Cartões de Métricas -->
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Saldo Atual</h5>
+                            <h3 class="{% if saldo >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                R$ {{ "%.2f"|format(saldo) }}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Resumo Mensal</h5>
+                            <canvas id="monthlyPieChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna de Gráficos Principais -->
+        <div class="col-md-6 h-100 d-flex flex-column">
+            <div class="row g-3 flex-grow-1">
+                <!-- Gráfico de Entradas vs Saídas -->
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">Fluxo Financeiro</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="balanceBarChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gráfico de Tendência -->
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">Tendência Financeira</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="trendLineChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna de Transações e Dicas -->
+        <div class="col-md-3 h-100 d-flex flex-column">
+            <div class="row g-3 flex-grow-1">
+                <!-- Transações Recentes -->
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">Transações Recentes</h5>
+                        </div>
+                        <div class="card-body overflow-auto">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transacao in transacoes[:5] %}
+                                    <tr>
+                                        <td>{{ transacao.data.strftime('%d/%m/%Y') }}</td>
+                                        <td class="{% if transacao.tipo == 'entrada' %}text-success{% else %}text-danger{% endif %}">
+                                            R$ {{ "%.2f"|format(transacao.valor) }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Dicas Financeiras -->
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">Dicas de Economia</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <li class="list-group-item">Defina metas financeiras</li>
+                                <li class="list-group-item">Corte gastos desnecessários</li>
+                                <li class="list-group-item">Crie uma reserva de emergência</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Dados de exemplo - substitua com seus dados reais
+    const entradas = {{ total_entradas }};
+    const saidas = {{ total_saidas }};
+
+    // Gráfico de Barras - Fluxo Financeiro
+    const balanceCtx = document.getElementById('balanceBarChart').getContext('2d');
+    new Chart(balanceCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Entradas', 'Saídas'],
+            datasets: [{
+                data: [entradas, saidas],
+                backgroundColor: ['rgba(75, 192, 75, 0.6)', 'rgba(255, 99, 132, 0.6)']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Gráfico de Pizza - Resumo Mensal
+    const pieCtx = document.getElementById('monthlyPieChart').getContext('2d');
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Entradas', 'Saídas'],
+            datasets: [{
+                data: [entradas, saidas],
+                backgroundColor: ['rgba(75, 192, 75, 0.6)', 'rgba(255, 99, 132, 0.6)']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+    // Gráfico de Linha - Tendência Financeira
+    const lineCtx = document.getElementById('trendLineChart').getContext('2d');
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [{
+                label: 'Saldo',
+                data: [1200, 1500, 1300, 1700, 1600, 1900],
+                borderColor: 'rgba(54, 162, 235, 1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
